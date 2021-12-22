@@ -102,10 +102,25 @@ def save_people(file_name, people):
         json.dump(people, fout, ensure_ascii=False, indent=4)
 
 
-def load_people(file_name):
+def load_people(file_name, schema):
     """
     Загрузить всех людей из файла JSON
     """
+
+    with open(file_name, "r", encoding="utf-8") as fin:
+        data = json.load(fin)
+    validator = jsonschema.Draft7Validator(schema)
+    try:
+        if not validator.validate(data):
+            print("Ошибок не обнаружено")
+    except jsonschema.exceptions.ValidationError:
+        print("Ошибка валидации", file=sys.stderr)
+        exit(1)
+
+    return data
+
+
+def main():
     schema = {
         "type": "array",
         "items": [
@@ -130,21 +145,6 @@ def load_people(file_name):
             }
         ]
     }
-
-    with open(file_name, "r", encoding="utf-8") as fin:
-        data = json.load(fin)
-    validator = jsonschema.Draft7Validator(schema)
-    try:
-        if not validator.validate(data):
-            print("Ошибок не обнаружено")
-    except jsonschema.exceptions.ValidationError:
-        print("Ошибка валидации", file=sys.stderr)
-        exit(1)
-
-    return data
-
-
-def main():
     """
     Главная функция программы.
     """
@@ -181,7 +181,7 @@ def main():
             # Получить имя файла.
             file_name = parts[1]
             # Загрузить данные файла с заданным именем.
-            people = load_people(file_name)
+            people = load_people(file_name, schema)
 
         else:
             print('Неизвестная команда', command, file=sys.stderr)
