@@ -98,6 +98,9 @@ def whois(people):
 
 
 def save_people(file_name, people):
+    """
+    Сохранить всех работников в файл JSON.
+    """
     with open(file_name, "w", encoding="utf-8") as fout:
         json.dump(people, fout, ensure_ascii=False, indent=4)
 
@@ -106,7 +109,6 @@ def load_people(file_name, schema):
     """
     Загрузить всех людей из файла JSON
     """
-
     with open(file_name, "r", encoding="utf-8") as fin:
         data = json.load(fin)
     validator = jsonschema.Draft7Validator(schema)
@@ -121,6 +123,9 @@ def load_people(file_name, schema):
 
 
 def main():
+    """
+    Главная функция программы.
+    """
     schema = {
         "type": "array",
         "items": [
@@ -145,9 +150,6 @@ def main():
             }
         ]
     }
-    """
-    Главная функция программы.
-    """
     people = []
     # Организовать бесконечный цикл запроса команд.
     while True:
